@@ -2,7 +2,8 @@ import Axios from "axios";
 import Cookies from "./Cookies";
 
 export default class ServerRequest {
-    private static readonly url = 'http://localhost:3001';
+    //'http://localhost:3001'
+    private static readonly url = `https://${document.location.hostname}`;
 
     public static tryLogin(username: string, password: string, realm:string) {
         Axios.post(this.url + "/login", {
