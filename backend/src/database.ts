@@ -4,7 +4,7 @@ require('dotenv').config();
 export default class Database {
     public static async query(query:string) {
         const client = new Client({
-            connectionString: process.env.DB_URI,
+            connectionString: process.env.DATABASE_URL,
             ssl: {
               rejectUnauthorized: false
             }
