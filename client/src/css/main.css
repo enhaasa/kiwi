@@ -1,0 +1,31 @@
+button.link {
+  background: none;
+  border: none;
+  outline: none;
+  text-decoration: underline;
+}
+button.link:hover {
+  cursor: pointer;
+}
+
+.Login {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+}
+.Login .formContainer {
+  display: grid;
+  grid-gap: 10px;
+}
+.Login .formContainer form {
+  display: grid;
+  grid-gap: 5px;
+}
+.Login .formContainer form label {
+  display: flex;
+  justify-content: space-between;
+}/*# sourceMappingURL=main.css.map */

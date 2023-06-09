@@ -1,0 +1,8 @@
+$padding: (
+    "small": 5px,
+    "standard": 10px,
+);
+
+@function getPadding($size) {
+    @return map-get($padding, $size);
+}

@@ -1,0 +1,13 @@
+button {
+
+    &.link {
+        background: none;
+        border: none;
+        outline: none;
+        text-decoration: underline;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+}

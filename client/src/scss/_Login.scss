@@ -1,0 +1,25 @@
+.Login {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+
+    display: grid;
+    place-items: center;
+
+    & .formContainer {
+        display: grid;
+        grid-gap: getPadding("standard");
+
+        & form {
+            display: grid;
+            grid-gap: getPadding("small");
+
+            & label {
+                display: flex;
+                justify-content: space-between;
+            }
+        }
+    }
+}
