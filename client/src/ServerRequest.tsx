@@ -11,7 +11,14 @@ export default class ServerRequest {
             realm: realm,
             loginToken: Cookies.getLoginToken()
         }).then(res => {
-            Cookies.setLoginToken(res.data.cookie);
+            const { isSuccessful, message, cookie } = res.data;
+
+            if(isSuccessful) {
+                Cookies.setLoginToken(cookie);
+                window.location.href = this.url + "/dashboard";
+            } else {
+                //window.alert(message);
+            }
         });
 
     }

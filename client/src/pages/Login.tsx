@@ -15,17 +15,13 @@ export default function Login() {
     }
 
     function handleRealm(value: string) {
-        setRealm(value);
+        setRealm(value); 
     }
     function handleUsername(value:string) {
         setUsername(value);
     }
     function handlePassword(value:string) {
         setPassword(value);
-    }
-
-    function showCookies() {
-        console.log(document.cookie);
     }
 
     useEffect(() => {
@@ -60,9 +56,15 @@ export default function Login() {
                 <form>
                     <label htmlFor="frealm">
                         <span>Realm</span>
-                        <button className="link" onClick={(e) => {e.preventDefault()}}>What's this?</button>
+                        <button className="link tooltip" onClick={(e) => {e.preventDefault()}}>
+                            <span className="tooltip">What's this?</span>
+
+                            <span className="tooltiptext">
+                                The realm alias provided by your venue administrator.
+                            </span>
+                        </button>
                     </label>
-                    <input type="text" placeholder="oasis" id="frealm" name="realm" onChange={e => handleRealm(e.target.value)}/>
+                    <input type="text" placeholder="Realm" id="frealm" name="realm" onChange={e => handleRealm(e.target.value)}/>
 
                     <label htmlFor="fusername">Username</label>
                     <input type="text" placeholder="Username" id="fusername" name="username" onChange={e => handleUsername(e.target.value)}/>
@@ -72,8 +74,6 @@ export default function Login() {
 
                     <input type="submit" value="Login" onClick={e => handleSubmit(e)}></input>
                 </form>
-
-                <button onClick={() => showCookies()}>Show Cookies</button>
 
                 <div className="footer">
                     Kiwi | Venue Management | by Enhasa

@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 3001;
 const LOGGING = false;
 
 function validateCookieToken(req) {
-  console.log("Client attempted to access secure page.");
+  LOGGING && console.log("Client attempted to access secure page.");
   const { authToken } = req.cookies;
 
   if (authToken) {
@@ -38,7 +38,6 @@ function validateCookieToken(req) {
   return false;
 }
 
-
 app.get('/login', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, './../../client/build/index.html'));
 });
@@ -55,12 +54,11 @@ app.get(['/', '/dashboard'], (req, res) => {
 
 app.use(express.static(path.join(__dirname, './../../client/build')));
 
-
 app.post('/login', async (req: Request, res: Response) => {
   LOGGING && console.log("Attempting login...");
 
-  const { username, password} = req.body;
-  const result:LoginAttempt = await Logins.tryDatabaseLogin(username, password);
+  const { username, password, realm} = req.body;
+  const result:LoginAttempt = await Logins.tryDatabaseLogin(username, password, realm);
   
   if (result.isSuccessful) {
     LOGGING && console.log("Login credentials validated against the server successfully!");
@@ -68,8 +66,16 @@ app.post('/login', async (req: Request, res: Response) => {
     const cookie:LoginCookie = Logins.generateCookie(token);
 
     Logins.add(result.user, token);
-    //res.send({cookie: cookie});
-    res.send({ cookie: cookie });
+    res.send({ 
+      isSuccessful: result.isSuccessful, 
+      message: result.message, 
+      cookie: cookie 
+    });
+  } else {
+    res.send({
+      isSuccessful: result.isSuccessful, 
+      message: result.message
+    })
   }
 });
 

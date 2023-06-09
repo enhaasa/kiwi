@@ -10,6 +10,18 @@ export default class Logins {
 
     public static loggedInUsers: User[] = [];
 
+
+    private static getLoggedInUserByToken(tokenId:string):User|false {
+        if (this.loggedInUsers.length === 0) return false;
+        
+        const result = this.loggedInUsers.find(user => (
+            user.token.id === tokenId
+        ));
+
+        if (!result) return false;
+        return result;
+    }
+
     public static add(user: User, token:Token) {
         this.loggedInUsers.push({
             ...user,
@@ -33,24 +45,12 @@ export default class Logins {
         return {name, value, props};
     }
 
-    private static getLoggedInUserByToken(tokenId:string):User|false {
-        if (this.loggedInUsers.length === 0) return false;
-        
-        const result = this.loggedInUsers.find(user => (
-            user.token.id === tokenId
-        ));
-
-        if (!result) return false;
-        return result;
-    }
-
     public static getLoggedInUsers() {
         return this.getLoggedInUsers;
     }
 
     public static tryCookieLogin(tokenId: string) {
         const result = this.getLoggedInUserByToken(tokenId);
-        console.log(result)
 
         if (!result) {
               return {
@@ -66,10 +66,19 @@ export default class Logins {
         }
     }
 
-    public static async tryDatabaseLogin(username: string, password:string):Promise<LoginAttempt> {
-        return await Database.query(`SELECT * FROM users WHERE username = '${username}'`).then(rows => {
-          const user = rows[0];
-          let result:LoginAttempt;
+    public static async tryDatabaseLogin(username: string, password:string, realm:string):Promise<LoginAttempt> {
+        return await Database.query(`
+            SELECT u.* FROM users u
+                JOIN realms r ON u.realm_id = r.id
+                WHERE r.name = '${realm}'
+            `)
+        .then(rows => {
+          const user = rows.find(row => row.username === username);
+
+          let result:LoginAttempt = {
+            isSuccessful: false,
+            message: "Username not found in this realm."
+          };
           
           if (user) {
             if (password === user.password) {
