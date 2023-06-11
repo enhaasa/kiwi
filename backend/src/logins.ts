@@ -1,17 +1,26 @@
-import { Request, Response } from 'express';
 import { getCurrentDate } from '../tools';
 import { randomBytes } from 'crypto';
 import { User, Token, LoginAttempt, LoginCookie } from '@shared/servertypes';
 import Database from './database';
 
-
 export default class Logins {
     private static readonly TOKEN_LENGTH = 32;
 
-    public static loggedInUsers: User[] = [];
+    public static loggedInUsers: User[] = [
+        {
+            id: 1,
+            username: "admin",
+            password: "carrots",
+            realm_id: 1,
+            access_level: 3,
+            token: {
+                id: "test",
+                creationDate: "test date"
+            }
+        }
+    ];
 
-
-    private static getLoggedInUserByToken(tokenId:string):User|false {
+    public static getLoggedInUserByToken(tokenId:string):User|false {
         if (this.loggedInUsers.length === 0) return false;
         
         const result = this.loggedInUsers.find(user => (
@@ -34,12 +43,16 @@ export default class Logins {
         return {
             id: randomBytes(this.TOKEN_LENGTH).toString('hex'),
             creationDate: getCurrentDate()
-        } 
+        }
     }
 
-    public static generateCookie(token:Token):LoginCookie {
+    public static generateCookie(token:Token, access_level:number, user_id:number):LoginCookie {
         const name = "authToken";
-        const value = JSON.stringify(token);
+        const value = {
+            token: token,
+            access_level: access_level,
+            user_id: user_id
+        };
         const props = { maxAge: 36000000} ;
 
         return {name, value, props};
@@ -70,7 +83,7 @@ export default class Logins {
         return await Database.query(`
             SELECT u.* FROM users u
                 JOIN realms r ON u.realm_id = r.id
-                WHERE r.name = '${realm}'
+                WHERE r.alias = '${realm}'
             `)
         .then(rows => {
           const user = rows.find(row => row.username === username);

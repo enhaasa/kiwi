@@ -1,6 +1,7 @@
 $padding: (
     "small": 5px,
     "standard": 10px,
+    "large": 20px,
 );
 
 @function getPadding($size) {

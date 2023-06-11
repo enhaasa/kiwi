@@ -1,0 +1,42 @@
+.Dashboard {
+    background: getBackground("canvas");
+    display: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+
+    display: grid;
+    place-items: center;
+
+    & .wrapper {
+        background: getBackground("secondary");
+        color: getForeground("primary");
+        
+        display: grid;
+        grid-template-columns: auto 1fr;
+
+        & aside {
+            padding: getPadding("standard");
+            background: getBackground("primary");
+            display: grid;
+            grid-gap: getPadding("standard");
+
+            & nav {
+                display: grid;
+                grid-gap: getPadding("small");
+            }
+        }
+        
+        & main {
+            padding: getPadding("large");
+            
+            display: grid;
+            grid-gap: getPadding("standard");
+
+            & section {
+                background: getBackground("primary");
+            }
+        }
+    }
+}

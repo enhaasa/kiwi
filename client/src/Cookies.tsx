@@ -3,10 +3,15 @@ import { Token } from '@shared/servertypes';
 export default class Cookies {
 
     public static getLoginToken() {
-        return this.getCookie("authToken");
+        const result = this.getCookie("authToken");
+        if(result) {
+            return JSON.parse(result).value.token.id;
+        }
+        return result;
     }
 
     public static setLoginToken(token: Token) {
+        console.log(token)
         document.cookie = `authToken=${JSON.stringify(token)}`;
     }
 

@@ -20,7 +20,11 @@ export type LoginAttempt = {
 
 export type LoginCookie = {
     name: "authToken",
-    value: string,
+    value: {
+        token: Token,
+        access_level: number,
+        user_id: number
+    },
     props: {
         maxAge: number
     }

@@ -6,24 +6,24 @@ import cors = require('cors');
 import cookieParser = require('cookie-parser');
 import Logins from './logins';
 import { Request, Response } from 'express';
+import Database from './database';
 import { Token, LoginAttempt, LoginCookie } from '@shared/servertypes';
 
 const app = express();
 app.use(cookieParser());
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 const PORT = process.env.PORT || 3001;
-const LOGGING = false;
+const LOGGING = true;
 
-function validateCookieToken(req) {
+function validateCookieToken(authToken:string) {
+  
   LOGGING && console.log("Client attempted to access secure page.");
-  const { authToken } = req.cookies;
-
+  
   if (authToken) {
-    const serializedCookie = JSON.parse(JSON.parse(authToken).value);
+    const serializedCookie:Token = JSON.parse(authToken).value.token;
     const result = Logins.tryCookieLogin(serializedCookie.id);
 
     if (result.isSuccessful) {
@@ -38,12 +38,14 @@ function validateCookieToken(req) {
   return false;
 }
 
-app.get('/login', (req: Request, res: Response) => {
+app.get('/login', (req:Request, res:Response) => {
   res.sendFile(path.join(__dirname, './../../client/build/index.html'));
 });
 
-app.get(['/', '/dashboard'], (req, res) => {
-  if (validateCookieToken(req)) {
+app.get(['/', '/dashboard'], (req:Request, res:Response) => {
+  const { authToken } = req.cookies;
+
+  if (validateCookieToken(authToken)) {
     LOGGING && console.log("Serving secure content.");
     res.sendFile(path.join(__dirname, './../../client/build/index.html'));
   } else {
@@ -63,24 +65,74 @@ app.post('/login', async (req: Request, res: Response) => {
   if (result.isSuccessful) {
     LOGGING && console.log("Login credentials validated against the server successfully!");
     const token:Token = Logins.generateToken();
-    const cookie:LoginCookie = Logins.generateCookie(token);
+    const cookie:LoginCookie = Logins.generateCookie(token, result.user.access_level, result.user.id);
 
     Logins.add(result.user, token);
+    console.log(Logins.loggedInUsers)
+
     res.send({ 
       isSuccessful: result.isSuccessful, 
       message: result.message, 
-      cookie: cookie 
+      cookie: cookie,
+      user: {
+        access_level: result.user.access_level
+      }
     });
   } else {
     res.send({
       isSuccessful: result.isSuccessful, 
       message: result.message
-    })
+    });
   }
 });
 
+app.post('/get', async (req: Request, res: Response) => {
+  const { token_id, table } = req.body;
+  console.log(token_id)
+  const user = Logins.getLoggedInUserByToken(token_id);
+  console.log(user)
+  if(!user) {
+    res.redirect("/login");
+    /*
+    res.send({
+      isSuccessful: false,
+      message: "User not logged in."
+    });*/
+    return;
+  } 
+
+  const validationResult = Database.validateRequest(user, table, "get");
+  if (!validationResult.isSuccessful) {
+    res.send({
+      isSuccessful: false,
+      message: validationResult.message
+    });
+    return;
+  } 
+  let queryString = `SELECT * FROM ${table}`;
+  let expectSingularResult = false;
+
+  switch(table) {
+    case "realm": 
+      queryString = `SELECT founding_date, name, address FROM realms
+      WHERE id = ${user.realm_id} LIMIT 1`;
+      expectSingularResult = true;
+    break;
+  }
+
+  const data = await Database.query(
+    queryString, expectSingularResult 
+  );
+
+  res.send({
+    isSuccessful: true,
+    message: "Successfully fetched data.",
+    data: data
+  });
+});
+
 // Error handling middleware
-app.use((err: any, req: Request, res: Response, next: Function) => {
+app.use((err: any, res: Response) => {
   LOGGING && console.error(err);
   res.status(500).send('Internal Server Error');
 });

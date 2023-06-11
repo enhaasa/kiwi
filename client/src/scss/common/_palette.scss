@@ -1,0 +1,17 @@
+$backgrounds: (
+    "primary": rgb(41, 41, 41),
+    "secondary": rgb(17, 17, 17),
+    "canvas": rgb(77, 77, 77),
+);
+@function getBackground($key) {
+    @return map-get($backgrounds, $key);
+}
+
+$foregrounds: (
+    "primary": rgb(240, 240, 240),
+    "secondary": rgb(190, 190, 190),
+
+);
+@function getForeground($key) {
+    @return map-get($foregrounds, $key);
+}

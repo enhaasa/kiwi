@@ -23,23 +23,6 @@ button.tooltip:hover button.tooltiptext {
   visibility: visible;
 }
 
-.tooltip .tooltiptext {
-  visibility: hidden;
-  width: 120px;
-  background-color: black;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px 0;
-  /* Position the tooltip */
-  position: absolute;
-  z-index: 1;
-}
-
-.tooltip:hover .tooltiptext {
-  visibility: visible;
-}
-
 .Login {
   position: fixed;
   width: 100%;
@@ -60,4 +43,43 @@ button.tooltip:hover button.tooltiptext {
 .Login .formContainer form label {
   display: flex;
   justify-content: space-between;
+}
+
+.Dashboard {
+  background: rgb(77, 77, 77);
+  display: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  display: grid;
+  place-items: center;
+}
+.Dashboard .wrapper {
+  background: rgb(17, 17, 17);
+  color: rgb(240, 240, 240);
+  display: grid;
+  grid-template-columns: auto 1fr;
+}
+.Dashboard .wrapper aside {
+  padding: 10px;
+  background: rgb(41, 41, 41);
+  display: grid;
+  grid-gap: 10px;
+}
+.Dashboard .wrapper aside nav {
+  display: grid;
+  grid-gap: 5px;
+}
+.Dashboard .wrapper main {
+  padding: 20px;
+  display: grid;
+  grid-gap: 10px;
+}
+.Dashboard .wrapper main section {
+  background: rgb(41, 41, 41);
+}
+
+body {
+  margin: 0;
 }/*# sourceMappingURL=main.css.map */

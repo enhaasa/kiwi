@@ -28,7 +28,10 @@ export default function Login() {
         if (Cookies.getLoginToken()) {
             handleSubmit();
         }
+
+        
     }, []);
+    
 
     /*
     useEffect(() => {

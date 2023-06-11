@@ -1,7 +1,16 @@
 //Common
 @import './common/sizes';
 @import './common/styles';
-@import './common/elements';
+@import './common/palette';
+
+//Pages
+@import './Login';
+@import './Dashboard';
 
 //Components
-@import './Login';
+
+
+//Global CSS
+body {
+    margin: 0;
+}
